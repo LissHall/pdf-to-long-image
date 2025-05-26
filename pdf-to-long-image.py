@@ -24,7 +24,7 @@ def gen_random_tmp_path(path_str_len: int = 16) -> str:
 def convert_pdf_to_images(pdf_path: str, images_path: str) -> int:
     try:
         pdf_doc = fitz.open(pdf_path)
-        images_amount = pdf_doc.pageCount
+        images_amount = pdf_doc.page_count
         print("Converting PDF to images...")
         with tqdm(total=images_amount) as pbar:
             for image_id in range(images_amount):
@@ -35,13 +35,13 @@ def convert_pdf_to_images(pdf_path: str, images_path: str) -> int:
                 # (1.33333333-->1056x816)   (2-->1584x1224)
                 zoom_x = 1.33333333
                 zoom_y = 1.33333333
-                mat = fitz.Matrix(zoom_x, zoom_y).preRotate(rotate)
-                pix = page.getPixmap(matrix=mat, alpha=False)
+                mat = fitz.Matrix(zoom_x, zoom_y, rotate)
+                pix = page.get_pixmap(matrix=mat)
 
                 if not os.path.exists(images_path):
                     os.makedirs(images_path)
 
-                pix.writePNG(images_path + "/" + "images_%s.png" % image_id)
+                pix.save(images_path + "/" + "images_%s.png" % image_id)
                 pbar.update(1)
         return images_amount
     except Exception as exc:
